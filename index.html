@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vitawey • Pedido via WhatsApp</title>
+<meta name="description" content="Escolha produtos, sabores e envie seu pedido via WhatsApp para a Vitawey.">
+<style>
+:root{
+  --brand:#12b36a; --brand-2:#0b8f55; --accent:#ff6a00;
+  --bg:#0a0f0d; --card:#101513; --text:#e7f9f0; --muted:#a2cdbd;
+  --radius:14px; --shadow:0 10px 30px rgba(0,0,0,.35); --gap:clamp(10px,2vw,16px);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+a{color:inherit;text-decoration:none}
+.container{width:min(1200px,92%);margin-inline:auto}
+header{position:sticky;top:0;z-index:20;background:linear-gradient(180deg, rgba(12,17,16,.97), rgba(12,17,16,.85));backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.06)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+.menu{display:flex;gap:10px;flex-wrap:wrap}
+.menu a{padding:8px 10px;border-radius:10px;color:var(--muted)}
+.menu a:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.cta{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand-2));border:none;color:#052313;font-weight:800;box-shadow:var(--shadow)}
+.small{font-size:.9rem}
+.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.12);color:var(--muted);padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.04)}
+h1{font-size:clamp(24px,4.2vw,44px);line-height:1.05;margin:.6rem 0}
+h2{font-size:clamp(20px,3.2vw,32px);margin:.6rem 0}
+section{padding:clamp(18px,4.5vw,40px) 0}
+.grid{display:grid;gap:var(--gap)}
+.grid.products{grid-template-columns:repeat(3,1fr)}
+@media (max-width: 900px){.grid.products{grid-template-columns:1fr 1fr}}
+@media (max-width: 560px){.grid.products{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);padding:0;box-shadow:var(--shadow);overflow:hidden}
+.card .img{aspect-ratio:16/11;background:#0e1514;border-bottom:1px solid rgba(255,255,255,.06)}
+.card .body{padding:12px}
+.card h3{margin:.4rem 0}
+.muted{color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.qty{display:inline-flex;align-items:center;border:1px solid rgba(255,255,255,.12);border-radius:10px;overflow:hidden}
+.qty button{background:rgba(255,255,255,.06);border:none;color:var(--text);width:34px;height:34px;cursor:pointer}
+.qty input{width:46px;height:34px;background:rgba(255,255,255,.02);border:none;text-align:center;color:var(--text)}
+.add{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);border-radius:10px;padding:8px 12px;cursor:pointer}
+.add:hover{background:rgba(255,255,255,.08)}
+.promo-tag{font-size:.78rem;background:linear-gradient(135deg,var(--accent),#ff9a3c);color:#2b1200;border-radius:8px;padding:2px 8px;font-weight:900}
+.layout{display:grid;grid-template-columns:1.2fr .8fr;gap:var(--gap)}
+@media (max-width: 980px){.layout{grid-template-columns:1fr}}
+.summary{position:sticky;top:90px;height:max-content}
+.prices{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:.3rem 0}
+.price-de{color:#93b2a7;text-decoration:line-through}
+.price-por{color:#ffe6d6;font-weight:700}
+.price-pix{background:linear-gradient(135deg,var(--accent),#ff9a3c);color:#2b1200;border-radius:8px;padding:2px 8px;font-weight:900}
+.input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--text)}
+table{width:100%;border-collapse:collapse}
+td,th{padding:8px;border-bottom:1px solid rgba(255,255,255,.06)}
+.ghost{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;cursor:pointer}
+.danger{background:linear-gradient(135deg,#ef4444,#f97316);color:#220a06;border:none}
+footer{padding:20px 0;color:var(--muted);border-top:1px solid rgba(255,255,255,.06);margin-top:20px}
+select{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);color:var(--text);border-radius:10px;padding:8px 10px;min-width:180px}
+.unav{opacity:.5;text-decoration:line-through}
+.promo-bar{position:sticky;top:48px;z-index:19;background:linear-gradient(90deg, rgba(18,179,106,.18), rgba(255,106,0,.18));border-bottom:1px solid rgba(255,255,255,.08)}
+.promo-bar .container{display:flex;gap:10px;align-items:center;justify-content:center;padding:10px 0}
+.promo-pill{background:linear-gradient(135deg,var(--accent),#ff9a3c);color:#2b1200;border-radius:999px;padding:4px 10px;font-weight:900}
+.logo{width:40px;height:40px;margin-right:10px}
+.brand{display:flex;align-items:center;gap:10px}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div class="brand">
+      <!-- Logo oficial (escudo+folha+halter) -->
+      <svg class="logo" viewBox="0 0 72 72" aria-hidden="true" role="img">
+        <defs>
+          <linearGradient id="vitaweyG" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#12b36a"/><stop offset="1" stop-color="#0b8f55"/>
+          </linearGradient>
+        </defs>
+        <path d="M36 6 L58 14 a2 2 0 0 1 1 1.8 v16 c0 16.5-10.8 27.4-22.2 33.1a4 4 0 0 1-3.6 0C21.8 59.2 11 48.3 11 31.8V15.8a2 2 0 0 1 1-1.8L36 6z" fill="url(#vitaweyG)"/>
+        <path d="M26 28c8-8 18-8 20-2-6 1-10 4-12 8-1 3-1 6 0 9-8-3-10-9-8-15z" fill="#062b18" opacity=".9"/>
+        <g fill="#062b18"><rect x="22" y="33" width="8" height="6" rx="1.5"/><rect x="42" y="33" width="8" height="6" rx="1.5"/><rect x="30" y="34.5" width="12" height="3" rx="1.5"/></g>
+      </svg>
+      <div>
+        <b>Vitawey Suplementos</b>
+        <div class="small" style="color:var(--muted)">Pedido rápido via WhatsApp</div>
+      </div>
+    </div>
+    <nav class="menu">
+      <a href="#promo">Promo da Semana</a>
+      <a href="#proteinas">Proteínas</a>
+      <a href="#creatinas">Creatinas</a>
+      <a href="#pre">Pré-treinos/Termogênicos</a>
+      <a href="#outros">Acessórios/Outros</a>
+    </nav>
+    <a class="cta" href="#resumo">Ver Resumo</a>
+  </div>
+</header>
+
+<div class="promo-bar">
+  <div class="container small">
+    <span class="promo-pill">5% OFF no PIX e Dinheiro</span>
+    <span>aplicado sobre o preço promocional “Por”.</span>
+  </div>
+</div>
+
+<main class="container layout">
+  <div>
+    <section id="promo">
+      <div class="row" style="justify-content:space-between">
+        <h1>Promo da Semana</h1>
+        <span class="badge">Desconto adicional 5% no PIX/Dinheiro</span>
+      </div>
+      <div class="grid products" id="promoGrid"></div>
+    </section>
+
+    <section id="proteinas">
+      <h2>Proteínas</h2>
+      <div class="grid products" data-grid="Proteínas"></div>
+    </section>
+
+    <section id="creatinas">
+      <h2>Creatinas</h2>
+      <div class="grid products" data-grid="Creatinas"></div>
+    </section>
+
+    <section id="pre">
+      <h2>Pré-treinos e Termogênicos</h2>
+      <div class="grid products" data-grid="Pré-treinos e Termogênicos"></div>
+    </section>
+
+    <section id="outros">
+      <h2>Acessórios e Outros</h2>
+      <div class="grid products" data-grid="Acessórios e Outros"></div>
+    </section>
+  </div>
+
+  <aside class="summary card" id="resumo">
+    <div class="body">
+      <h2>Resumo do pedido</h2>
+      <p class="small muted">Selecione itens/sabores e envie no WhatsApp. <b class="price-pix">5% OFF PIX/Dinheiro</b> é destacado na mensagem.</p>
+      <div style="max-height:340px;overflow:auto;border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:6px">
+        <table id="cartTable" aria-live="polite">
+          <thead><tr><th style="text-align:left">Item</th><th>Qtd</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="row" style="margin-top:10px;justify-content:space-between">
+        <button class="ghost danger" id="clearCart">Limpar</button>
+        <button class="cta" style="background:linear-gradient(135deg,var(--accent),#ff9a3c);color:#2b1200;border:none" id="sendWA">Enviar no WhatsApp</button>
+      </div>
+      <div style="margin-top:12px;display:grid;gap:8px">
+        <input class="input" id="clienteNome" placeholder="Seu nome (opcional)">
+        <input class="input" id="clienteCEP" placeholder="CEP (opcional)">
+        <textarea class="input" id="obs" rows="3" placeholder="Observações (ex.: sabor, horário de entrega)"></textarea>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<footer class="container">
+  <p class="small muted">© <span id="year"></span> Vitawey Suplementos • Pedido via WhatsApp</p>
+</footer>
+
+<script>
+// ====== CONFIGS SIMPLES ======
+const WHATSAPP_NUMBER = "55XXXXXXXXXXX"; // troque para: 5511999990000
+const PROMOS = ["gold-whey-adaptogen-900g","creatina-dux-300g","v9-pump-shark-300g","coqueteleira-vitafor-600"];
+
+const CATALOG = [
+  { id:"protein-crush-under-900", name:"PROTEIN CRUSH 900G - UNDERLABZ", cat:"Proteínas" },
+  { id:"gold-whey-adaptogen-900g", name:"Gold Whey Original 900g Bag - Adaptogen", cat:"Proteínas" },
+  { id:"whey-max-900", name:"100% Whey POTE 900g CHOCOLATE MALTADO - Max Titanium", cat:"Proteínas" },
+  { id:"tasty-whey-3w-chocomaltine", name:"Suplemento Tasty Whey 3w Gourmet Whey Protein Adaptogen Science Pote 900g Sabor Chocomaltine", cat:"Proteínas" },
+  { id:"whey-shark-900", name:"100% Whey Protein 900g - Shark Pro", cat:"Proteínas" },
+
+  { id:"creatina-dux-300g", name:"Creatina Monohidratada Dux 300g", cat:"Creatinas" },
+  { id:"creatine-max-300g", name:"Creatine 300g - MAX TITANIUM", cat:"Creatinas" },
+  { id:"creatina-darklab-500g", name:"Creatina Monohidratada 500g Dark lab", cat:"Creatinas" },
+
+  { id:"pre-abs-absoluto-420", name:"Pré Treino Absoluto Maça Verde 420g - Absolut", cat:"Pré-treinos e Termogênicos" },
+  { id:"v9-pump-shark-300g", name:"V9 Pump Shark Pro 300g Pré Treino", cat:"Pré-treinos e Termogênicos" },
+  { id:"diabo-verde-300g", name:"Diabo Verde Pré-Treino 300g", cat:"Pré-treinos e Termogênicos" },
+  { id:"supercoffee-lg-380", name:"Supercoffee Lingua de Gato - Economic Size (380g) - Caffeine Army", cat:"Pré-treinos e Termogênicos" },
+  { id:"dimethylex-60", name:"DIMETHYLEX 60 CAPS - UNDERLABZ", cat:"Pré-treinos e Termogênicos" },
+
+  { id:"coqueteleira-vitafor-600", name:"Coqueteleira 600ml  Vitafor", cat:"Acessórios e Outros" },
+  { id:"coqueteleira-dux-800", name:"Coqueteleira Fumê Dux Nutrition 800ml", cat:"Acessórios e Outros" },
+  { id:"pasta-amendoim-ganexa-450", name:"Pasta de Amendoim 450g - La Ganexa", cat:"Acessórios e Outros" },
+];
+
+const PRICES = {
+  "protein-crush-under-900": { normal: 130.00, promo: 109.90 },
+  "dimethylex-60": { normal: 100.00, promo: 79.90 },
+  "creatina-dux-300g": { normal: 110.00, promo: 89.90 },
+  "creatine-max-300g": { normal: 100.00, promo: 75.90 },
+  "pre-abs-absoluto-420": { normal: 150.00, promo: 129.90 },
+  "coqueteleira-vitafor-600": { normal: 20.00, promo: 15.00 },
+  "coqueteleira-dux-800": { normal: 20.00, promo: 15.00 },
+  "pasta-amendoim-ganexa-450": { normal: 60.00, promo: 45.00 },
+  "gold-whey-adaptogen-900g": { normal: 150.00, promo: 139.90 },
+  "whey-max-900": { normal: 145.00, promo: 129.90 },
+  "v9-pump-shark-300g": { normal: 140.00, promo: 109.90 },
+  "creatina-darklab-500g": { normal: 130.00, promo: 99.90 },
+  "tasty-whey-3w-chocomaltine": { normal: 200.00, promo: 174.90 },
+  "whey-shark-900": { normal: 139.90, promo: 119.90 },
+  "diabo-verde-300g": { normal: 120.00, promo: 89.90 },
+  "supercoffee-lg-380": { normal: 235.00, promo: 209.90 },
+};
+
+const FLAVORS = {
+  "whey-max-900": { available:["Chocolate Maltado"], unavailable:["Baunilha","Morango"] },
+  "tasty-whey-3w-chocomaltine": { available:["Chocomaltine"], unavailable:[] },
+  "whey-shark-900": { available:["Baunilha","Chocolate"], unavailable:["Morango"] },
+  "gold-whey-adaptogen-900g": { available:["Chocolate","Baunilha"], unavailable:[] },
+  "supercoffee-lg-380": { available:["Língua de Gato"], unavailable:[] }
+};
+
+// ===== Helpers =====
+const money = (v)=> 'R$ ' + v.toFixed(2).replace('.',',');
+const pixPrice = (id)=> +(PRICES[id].promo * 0.95).toFixed(2);
+const categoryColor = (cat)=> ({"Proteínas":"#12b36a","Creatinas":"#00baf2","Pré-treinos e Termogênicos":"#ff6a00","Acessórios e Outros":"#9b8cff"}[cat]||"#12b36a");
+function svgPlaceholder(name, cat){
+  const c = categoryColor(cat), t = encodeURIComponent(name);
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 550'>
+    <defs><linearGradient id='g1' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='${c}' stop-opacity='.28'/><stop offset='1' stop-color='#0b0f0d' stop-opacity='.9'/></linearGradient></defs>
+    <rect width='800' height='550' rx='28' fill='url(#g1)'/><text x='50' y='320' font-size='44' fill='#e9f9f0' font-family='system-ui,Segoe UI,Roboto' font-weight='700'>${t}</text><text x='50' y='360' font-size='22' fill='#a6c7bb' font-family='system-ui,Segoe UI,Roboto'>Imagem ilustrativa</text></svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+
+// ===== Render =====
+function cardTemplate(item, promo=false){
+  const p = PRICES[item.id]; const pix = pixPrice(item.id);
+  const f = FLAVORS[item.id] || {available:[], unavailable:[]};
+  const hasFlavor = (f.available && f.available.length);
+  const flavorSelect = hasFlavor ? `<label class="small" for="fl-${item.id}">Sabor</label>
+    <select id="fl-${item.id}" data-flavor-select="${item.id}"><option value="">Selecione</option>${f.available.map(s=>`<option value="${s}">${s}</option>`).join('')}</select>` : '';
+  const unavailable = (f.unavailable||[]).length ? `<div class="small muted">Indisp.: ${f.unavailable.map(s=>'<span class="unav">'+s+'</span>').join(', ')}</div>` : '';
+
+  return `<article class="card ${promo?'promo':''}">
+    <div class="img"><img alt="${item.name}" src="${svgPlaceholder(item.name, item.cat)}" loading="lazy"></div>
+    <div class="body">
+      <div class="row" style="justify-content:space-between"><h3>${item.name}</h3>${promo?'<span class="promo-tag">Promo</span>':''}</div>
+      <div class="prices"><span class="price-de">De: ${money(p.normal)}</span><span class="price-por">Por: <b>${money(p.promo)}</b></span><span class="price-pix">PIX/Dinheiro: ${money(pix)}</span></div>
+      ${flavorSelect}${unavailable}
+      <div class="row" style="margin-top:8px"><div class="qty" data-item="${item.id}"><button type="button">−</button><input type="number" min="0" value="0"><button type="button">+</button></div><button class="add" data-add="${item.id}">Adicionar</button></div>
+      <p class="muted small">Categoria: ${item.cat}</p>
+    </div></article>`;
+}
+function mount(){
+  const promoGrid = document.getElementById('promoGrid');
+  promoGrid.innerHTML = PROMOS.map(id => CATALOG.find(i=>i.id===id)).filter(Boolean).map(i=>cardTemplate(i,true)).join('') || '<p class="muted">Sem itens em promoção no momento.</p>';
+  const byCat = {}; CATALOG.forEach(i=>{ (byCat[i.cat]??=[]).push(i) });
+  document.querySelectorAll('[data-grid]').forEach(grid=>{ const cat = grid.getAttribute('data-grid'); grid.innerHTML = (byCat[cat]||[]).map(i=>cardTemplate(i, PROMOS.includes(i.id))).join(''); });
+  document.querySelectorAll('.qty').forEach(box=>{ const input = box.querySelector('input'); box.querySelectorAll('button')[0].onclick = ()=>{ input.value = Math.max(0, (+input.value||0)-1); }; box.querySelectorAll('button')[1].onclick = ()=>{ input.value = (+input.value||0)+1; }; });
+  document.querySelectorAll('[data-add]').forEach(btn=>{ btn.onclick = ()=>{ const id = btn.getAttribute('data-add'); const box = document.querySelector('.qty[data-item="'+id+'"]'); const qty = parseInt(box.querySelector('input').value||"0",10) || 1; const sel = document.querySelector('[data-flavor-select="'+id+'"]'); const flavor = sel ? sel.value.trim() : ""; const f = FLAVORS[id] || {available:[],unavailable:[]}; if((f.available||[]).length && !flavor){ alert("Selecione o sabor."); return; } addToCart(id, qty, flavor); box.querySelector('input').value = 0; if(sel) sel.selectedIndex = 0; }; });
+}
+document.addEventListener('DOMContentLoaded', ()=>{ document.getElementById('year').textContent = new Date().getFullYear(); mount(); renderCart(); document.getElementById('clearCart').onclick = clearCart; document.getElementById('sendWA').onclick = sendWA; });
+
+// ===== Carrinho =====
+const CART_KEY = "vitawey_cart_simple";
+function readCart(){ try{ return JSON.parse(localStorage.getItem(CART_KEY)||"{}"); }catch(e){ return {}; } }
+function writeCart(c){ localStorage.setItem(CART_KEY, JSON.stringify(c)); }
+function makeKey(id, flavor){ return id + "::" + (flavor||""); }
+function addToCart(id, q, flavor=""){ const cart = readCart(); const key = makeKey(id, flavor); cart[key] = (cart[key]||0) + q; if(cart[key] <= 0) delete cart[key]; writeCart(cart); renderCart(); }
+function removeFromCart(key){ const cart = readCart(); delete cart[key]; writeCart(cart); renderCart(); }
+function clearCart(){ writeCart({}); renderCart(); }
+function renderCart(){
+  const cart = readCart(); const tbody = document.querySelector('#cartTable tbody'); tbody.innerHTML = ''; const keys = Object.keys(cart);
+  if(!keys.length){ const tr=document.createElement('tr'); tr.innerHTML='<td colspan="3" class="muted">Nenhum item adicionado ainda.</td>'; tbody.appendChild(tr); return; }
+  keys.forEach(key=>{ const [id, flavor] = key.split("::"); const item = CATALOG.find(i=>i.id===id); if(!item) return; const q = cart[key]; const p = PRICES[id]; const pix = pixPrice(id); const title = item.name + (flavor? (" — " + flavor) : ""); const tr = document.createElement('tr'); tr.innerHTML = `<td>${title}<div class="small muted">De: ${money(p.normal)} • Por: ${money(p.promo)} • PIX/Dinheiro: ${money(pix)}</div></td><td style="text-align:center">${q}</td><td style="text-align:right"><button class="ghost" data-del="${key}">Remover</button></td>`; tbody.appendChild(tr); });
+  tbody.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>removeFromCart(b.getAttribute('data-del')));
+}
+
+// ===== WhatsApp =====
+const waLink = (text) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+function sendWA(){
+  const cart = readCart(); const entries = Object.entries(cart); if(entries.length===0){ alert('Adicione pelo menos 1 item.'); return; }
+  const nome = document.getElementById('clienteNome').value.trim();
+  const cep = document.getElementById('clienteCEP').value.trim();
+  const obs = document.getElementById('obs').value.trim();
+  const lines = []; lines.push('*Pedido Vitawey*'); if(nome) lines.push('Cliente: ' + nome); if(cep) lines.push('CEP: ' + cep); lines.push(''); lines.push('*Itens:*');
+  for(const [key,q] of entries){ const [id, flavor] = key.split("::"); const item = CATALOG.find(i=>i.id===id); const p = PRICES[id]; const pix = pixPrice(id); lines.push(`- ${item.name}${flavor?(' — '+flavor):''}  x${q}  (De ${money(p.normal)} | Por ${money(p.promo)} | PIX/Dinheiro ${money(pix)})`); }
+  if(obs){ lines.push(''); lines.push('*Observações do cliente:* ' + obs); }
+  lines.push(''); lines.push('Por favor, confirmar valores, frete e prazo.');
+  const msg = lines.join('\n'); window.open(waLink(msg), '_blank');
+}
+</script>
+</body>
+</html>
